@@ -4,6 +4,7 @@ const app = express();
 require('dotenv').config()
 const port = process.env.PORT || 5000; 
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const res = require('express/lib/response');
 
 //middleware 
 app.use(cors());
@@ -49,7 +50,26 @@ async function run() {
       const result = await productCollection.deleteOne(query);
       res.send(result); 
     })
+
+    // Update Product
+
+    app.put('/product/:id', async(req,res)=>{
+      const id = req.params.id; 
+      const updatedProduct = req.body; 
+      const filter = {_id: ObjectId(id)}; 
+      const options = {upsert:true}; 
+      const updateDoc = {
+        $set:{
+          quantity: updatedProduct.quantity
+        }
+      }
+      const result = await productCollection.updateOne(filter, updateDoc, options); 
+      res.send(result); 
+    })
+
+    
   }
+
   finally{
 
   }
