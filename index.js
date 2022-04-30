@@ -18,6 +18,7 @@ async function run() {
   try {
     await client.connect();
     const productCollection = client.db('electronicsWarehouse').collection('products');
+    const ItemCollection = client.db('electronicsWarehouse').collection('items'); 
     console.log('db connected'); 
     
     // product API
@@ -67,6 +68,21 @@ async function run() {
       res.send(result); 
     })
 
+    // Items API
+
+    app.get('/items', async(req, res)=>{
+      const query = {};
+      const cursor =  ItemCollection.find(query);
+      const items = await cursor.toArray(); 
+      res.send(items); 
+    })
+
+    // My Items
+    app.post('/items', async(req,res)=>{
+      const myItem = req.body; 
+      const result = await ItemCollection.insertOne(myItem); 
+      res.send(result); 
+    })
     
   }
 
