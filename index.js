@@ -27,7 +27,7 @@ async function run() {
       res.send(products); 
     })
 
-    // product post
+    // product insert
     app.post('/products', async(req, res)=>{
       const newProduct = req.body;
       console.log(newProduct); 
@@ -35,14 +35,20 @@ async function run() {
       res.send(result); 
     })
     // find one product 
-    app.get('/products/:id', async(req, res)=>{
+    app.get('/product/:id', async(req, res)=>{
       const id = req.params.id; 
       const query = {_id: ObjectId(id)};
       const product = await productCollection.findOne(query); 
       res.send(product); 
     })
 
-
+    // Delete Products 
+    app.delete('/product/:id', async(req,res)=>{
+      const id = req.params.id;
+      const query = {_id: ObjectId(id)};
+      const result = await productCollection.deleteOne(query);
+      res.send(result); 
+    })
   }
   finally{
 
