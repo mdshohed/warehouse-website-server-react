@@ -16,12 +16,10 @@ function verifyJWT(req, res, next){
   if(!authHeader){
     return res.status(401).send({message: 'unauthorized access'}); 
   }
-  // const token = authHeader.split(' ')[1];
   jwt.verify(authHeader, process.env.ACCESS_TOKEN_SECRET, (err, decoded)=>{
     if(err){
       return res.status(403).send({message: 'Forbidden access'});
     }
-    // console.log('decoded', decoded);
     req.decoded = decoded; 
     next(); 
   })
@@ -57,7 +55,6 @@ async function run() {
     // product insert
     app.post('/products', async(req, res)=>{
       const newProduct = req.body;
-      console.log(newProduct); 
       const result = await productCollection.insertOne(newProduct); 
       res.send(result); 
     })
@@ -73,7 +70,7 @@ async function run() {
     app.delete('/product/:id', async(req,res)=>{
       const id = req.params.id;
       const query = {_id: ObjectId(id)};
-      const result = await productCollection.deleteOne(query);
+      const result = await productCollection.deleteOne(query); 
       res.send(result); 
     })
 
@@ -97,8 +94,7 @@ async function run() {
 
     app.get('/items',verifyJWT, async(req, res)=>{
       const decodedEmail = req.decoded.email; 
-      const email = req.query.email;
-      console.log(email); 
+      const email = req.query.email; 
       if(email===decodedEmail){
         const query = {email:email};
         const cursor =  ItemCollection.find(query);
@@ -110,10 +106,19 @@ async function run() {
       }
     })
 
-    // My Items
+    // insert Items
     app.post('/items', async(req,res)=>{
       const myItem = req.body; 
       const result = await ItemCollection.insertOne(myItem); 
+      res.send(result); 
+    })
+
+    // delete items
+    app.delete('/items/:id', async(req,res)=>{
+      const id = req.params.id;
+      const email = req.query.email;  
+      const query = {_id: ObjectId(id)};
+      const result = await ItemCollection.deleteOne(query);
       res.send(result); 
     })
     
