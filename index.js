@@ -92,6 +92,13 @@ async function run() {
 
     // Items API
 
+    app.get('/allItems',async(req, res)=>{
+      const query = {}; 
+      const cursor = ItemCollection.find(query); 
+      const allItems = await cursor.toArray(); 
+      res.send(allItems); 
+    })
+
     app.get('/items',verifyJWT, async(req, res)=>{
       const decodedEmail = req.decoded.email; 
       const email = req.query.email; 
